@@ -1,0 +1,1274 @@
+https://www.liaoxuefeng.com/wiki/896043488029600
+1、集中式和分布式的区别
+评论看完后，说说的感受和理解，望指点
+自由之路Pogue created at October 15, 2020 6:28 PM, Last updated at August 19, 2022 11:04 AM
+看完文章，刚开始看评论的时候，感觉：“一个一个问题的问题真好，我也有这样的疑问”，各位网友的回答也都很清楚，直到我看到 -廖雪峰- 老师的评论
+
+集中式和分布式的区别是：
+你的本地是否有完整的版本库历史！
+假设SVN服务器没了，那你丢掉了所有历史信息，因为你的本地只有当前版本以及部分历史信息。
+假设GitHub服务器没了，你不会丢掉任何git历史信息，因为你的本地有完整的版本库信息。你可以把本地的git库重新上传到另外的git服务商。
+才感觉真正明白(当然我也不太清楚我是不是真的明白)
+我的理解是：Git 其实就是每个人电脑上都装一个svn服务器，你写了代码提交到自己电脑服务器上就是Commit；但是如果你想多人协作，就要把你的改动发送到你**每一个同事 **的svn服务器上就是push；
+
+关于有人有疑问说
+
+分布式的版本控系统如果要在多个人之间协作不也是需要一个像github一样的的远程版本库吗，这与集中式的有什么区别呢？
+接着按照上面的理解，假如你还有10个同事，你每一次更改都要提交10次，其他同事有更改也要分别向我们提交，是不是觉得好烦，所以我们说干脆找一台固定电脑（服务器）用来统一规定把修改推给这台电脑，这样只需要提交1次就行了，其他人去这台机器上同步就好了。
+发现没有，Git的中央服务器可以没有，我们只是为了方便才这么做的。
+此时，如果这个中央服务器坏了，你只需要重新弄个电脑，把自己电脑上的同步一份过去，大家约定好都提交到这个新电脑上就行了。【所有的版本和历史都在，因为大家电脑上都是一样的】
+而集中式的SVN就不同了，你从中央服务器上下载好完整的代码，正常工作（写代码）是可以，但是如果断网了，你就无法回滚版本；这时你可能谁说，先不提交，等联网了我再提交。
+不好意思，这次断网是因为服务器报废了，是蒸发的那种，硬盘灰飞烟灭了。等你再次连上网的时候，就是你永远丢失了历史版本的时候，想回滚就只能靠做梦了。
+
+～～～～～～～我的理解大概是这样的，不知道对不对～～～～～
+
+廖雪峰
+Created at October 16, 2020 10:08 AM
+你的理解是对的，比特币的区块链设计就类似git，人手一份全账本，只是用p2p全网同步，而git通常搞个中心化服务来同步
+svn像银行，完整账本只有银行有，作为终端节点可以向银行查询账本，但如果某一天银行没了，整个完整账本就没了
+分布式的核心设计是同步，而不是主从
+软件架构，核心思想其实是非常简单的
+
+Git和SVN的共同点
+用户6902406472 created at January 6, 2022 7:27 PM, Last updated at January 6, 2022 7:27 PM
+SVN作为集中式版本控制系统的代表，以一对多的版本更新方式被诟病，且受网络、网速的限制；GIT作为分布式版本控制的代表，每台电脑本身就有一个中央服务器，那每个人更新后的版本时进行“互相更新”吗？最后还是以最终更新版本为主？感觉GIT本质原理还是“集中式”的，只是说范围更小。
+
+Git的优势。
+磊哥_8868 created at May 2, 2021 11:25 AM, Last updated at May 2, 2021 11:25 AM
+Git有一个存储在服务器上的远程存储库和一个存储在每个开发人员的计算机中的本地存储库。这意味着代码不仅存储在中央服务器上，而且代码的完整副本也存在于所有开发人员的计算机中。因为每个节点都有一个本地副本，所以几乎所有对Git的操作都是本地的（Pull和Push命令除外）。这意味着您不必一直连接到远程存储库即可进行工作。
+
+关于Git的优势 和 断网工作的区别
+漫漫秋风雨 created at June 13, 2017 7:08 PM, Last updated at July 3, 2020 12:37 PM
+我是这么理解，这里有几个概念：本地、服务器、中央服务器（远程服务器）。每一次
+commit是提交到本本机的服务器，这个不需要联网，正所谓的版本管理，就是要方便我
+们知道每一个版本，比如回到之前的某个版本（这是其一），而且回退到某个之前的版
+本，也是从本机的服务器拿的数据，这些都不需要联网。而 SVN 的每一次 commit 都需
+要联网，这就需要网络的等待。 Git只有在Push、pull 的时候需要联网，而我们平时更
+多的操作应是commit。
+再有就是，断网的情况下，SVN也能工作，但是由于没有版本控制的记录，当多人修改
+后就比较难以快速的合并，但是Git都在本地保存了版本记录，所以大家合并起来就方便
+得多了。
+
+黯夜旋风
+Created at June 29, 2020 11:26 AM
+我的理解：断网了不管是git还是svn都失去作用，svn不能提交、更新或检出，一切操作都是单机操作，svn完全失去作用；git有本地仓库，可以提交到本地仓库(本地服务器)，本地每次修改提交都有备份，但也是单机，直到连上网，才能推送到远程仓库(远程服务器)，其他人才能共享到。各位大佬请指正。
+
+
+Question: 我是暴脾气暴脾气
+Created at December 18, 2018 3:45 PM
+那也就是说其实git和svn都是可以在断网情况下工作的，且不管是分布式还是集中式都是存在中央服务器概念的。svn每次的commit是提交到本地，然后本地记录了自己每次的提交历史记录；而svn的每次commit都是要提交到中央服务器的。那么如果git和svn的许多用户都修改了文件，需要向中央服务器提交新的记录（svn是commit，git是push），此时不是都需要合并所有用户的代码吗，到这的结果都是一样的。 只是说分布式在本地保存了版本记录，用户可以不联网就回溯到历史版本，这个是集中式所没有的。那这样的区别其实在某些场景下是不重要的。这样理解对吗？本人小白，希望大神指点。
+
+Answer:假蛙工程师
+Created at July 3, 2020 12:37 PM
+@我是暴脾气暴脾气 SVN和Git的最大区别在于版本库或者版本控制的位置在中央服务器还是本地电脑（泛指，可以是本地的任意电脑）。
+1. 都可以在断网的情况下工作？
+如果是一家小公司，SVN服务器就在局域网内，SVN的确可以在断网情况下工作。但是对于中大型公司，SVN服务器一般是独立出来的，不在局域网内的，你完成计划的工作内容，需要提交做成一个版本，但是由于版本库是在中央服务器，于是你要等网络联通之后，才可以提交。因此对于SVN服务器不在局域网内的情况下，断网是不可以使用的。
+Git版本库在本地，在完成计划的工作内容后，不管是否联网，都不会影响在本地做成一个版本。
+
+2. 分布式还是集中式都是存在中央服务器概念？
+不是的，Git没有中央服务器。中央服务器SVN是用来做版本控制的。Git的版本控制在本地，所以没有中央服务器一说。而Git要多人合作时，可以选择把自己修改的内容即某一版，推给其他合作者，然后其他合作者将该版本合并到自己的修改里，然后在把自己合并后的新版推给其他合作者，这样10个人的团队，假设，每个人都把自己的修改推给其他人，共推了90次，耗时，耗带宽，不如统一规定把修改推给某台设备，这样只修要推10次。
+
+3.Git每次的commit是提交到本地，然后本地记录了自己每次的提交历史记录；而svn的每次commit都是要提交到中央服务器的。那么如果git和svn的许多用户都修改了文件，需要向中央服务器提交新的记录（svn是commit，git是push），此时不是都需要合并所有用户的代码吗，到这的结果都是一样的。 只是说分布式在本地保存了版本记录，用户可以不联网就回溯到历史版本，这个是集中式所没有的。那这样的区别其实在某些场景下是不重要的。这样理解对吗？
+关于代码合并，Git和SVN的合并好像没什么区别。 关于区别，回复的内容首部就说了SVN和Git的最大区别在于版本库或者版本控制的位置在中央服务器还是本地电脑。
+以上
+
+是否？
+林珑980521 created at December 31, 2019 12:44 PM, Last updated at December 31, 2019 2:48 PM
+请问，用git的话，个人开发（没有同事，不考虑局域网)，仅会保存版本到 本地服务器 上，那我换个电脑，版本记录不就没了吗？
+我知道肯定不会是这样，那么git肯定会有一个中央服务器吧？难不成会把我的版本保存到别的陌生的分布式的电脑服务器上，那也太不安全了吧。
+这样的话，对于个人开发，git只是svn的升级版而已，仅仅是多了个 能保存历史版本的本地服务器 的功能而已？
+
+廖雪峰
+Created at December 31, 2019 2:48 PM
+git在你本地保存的是完整历史版本，换个电脑，你需要同步完整历史版本就可以用了
+两台电脑，哪台都是完整的服务器，不存在绝对的中心
+我们说的中央服务器，一般指不关机24小时在线的git服务器，比如github
+只要你愿意，你的本地计算机也可以24小时开着当git服务器
+
+
+验证一下阅后心得
+萨沙的主战场 created at September 13, 2016 11:29 PM, Last updated at April 23, 2019 9:42 AM
+我来解读一下读完后理解的Git与SVN的主要差别 我觉得这两个工具主要的区别在于历史版本维护的位置
+Git本地仓库包含代码库还有历史库，在本地的环境开发就可以记录历史 而SVN的历史库存在于中央仓库，每次对比与提交代码都必须连接到中央仓库才能进行
+这样的好处在于： 1、自己可以在脱机环境查看开发的版本历史 2、多人开发时如果充当中央仓库的Git仓库挂了，任何一个开发者的仓库都可以作为中央仓库进行服务
+廖老师，不知道这样子的理解是否正确，或者是有什么补充的吗？谢谢！
+
+廖雪峰
+Created at September 14, 2016 4:20 PM
+对
+不过开发者仓库一般不直接充当中央库，但你可以随时创建一个新的中央库然后同步就立刻恢复了中央库
+
+
+集中式与分布式的差别
+尘封的炉台 created at November 8, 2015 11:07 PM, Last updated at February 27, 2018 2:14 PM
+分布式的版本控系统如果要在多个人之间协作不也是需要一个像github一样的的远程版本库吗，这与集中式的有什么区别呢？
+廖雪峰
+Created at November 10, 2015 3:50 PM
+集中式的服务器挂了所有人都挂了，因为完整仓库只存在服务器上，分布式如果github挂了你可以重新建一个服务器，然后把任何一个人的仓库clone过去
+一句话总结：分布式版本控制的每个节点都是完整仓库
+痞子达_活在当下
+Created at January 22, 2016 12:12 PM
+廖老师，那我能不能理解svn中央服务器挂了，那我一样可以将本地的项目重新搭建一个服务器呢？
+廖雪峰
+Created at January 22, 2016 8:58 PM
+不行，你的本地没有历史版本
+
+2、创建版本库
+第一步：创建一个版本库非常简单，首先，选择一个合适的地方，创建一个空目录：
+$ mkdir learngit
+$ cd learngit
+$ pwd
+/c/Users/Administrator/Desktop/learngit
+pwd命令用于显示当前目录
+
+第二步，通过git init命令把这个目录变成Git可以管理的仓库：
+$ git init
+Initialized empty Git repository in C:/Users/Administrator/Desktop/learngit/.git
+可以发现当前目录下多了一个.git的目录，这个目录是Git来跟踪管理版本库的，没事千万不要手动修改这个目录里面的文件，不然改乱了，就把Git仓库给破坏了。
+如果你没有看到.git目录，那是因为这个目录默认是隐藏的，用ls -ah命令就可以看见。
+
+第三步、把文件添加到版本库
+首先这里再明确一下，所有的版本控制系统，其实只能跟踪文本文件的改动，比如TXT文件，网页，所有的程序代码等等，Git也不例外。版本控制系统可以告诉你每次的改动，比如在第5行加了一个单词“Linux”，在第8行删了一个单词“Windows”。而图片、视频这些二进制文件，虽然也能由版本控制系统管理，但没法跟踪文件的变化，只能把二进制文件每次改动串起来，也就是只知道图片从100KB改成了120KB，但到底改了啥，版本控制系统不知道，也没法知道。
+不幸的是，Microsoft的Word格式是二进制格式，因此，版本控制系统是没法跟踪Word文件的改动的，前面我们举的例子只是为了演示，如果要真正使用版本控制系统，就要以纯文本方式编写文件。
+因为文本是有编码的，比如中文有常用的GBK编码，日文有Shift_JIS编码，如果没有历史遗留问题，强烈建议使用标准的UTF-8编码，所有语言使用同一种编码，既没有冲突，又被所有平台所支持。
+使用Windows的童鞋要特别注意：
+千万不要使用Windows自带的记事本编辑任何文本文件。原因是Microsoft开发记事本的团队使用了一个非常弱智的行为来保存UTF-8编码的文件，他们自作聪明地在每个文件开头添加了0xefbbbf（十六进制）的字符，你会遇到很多不可思议的问题，比如，网页第一行可能会显示一个“?”，明明正确的程序一编译就报语法错误，等等，都是由记事本的弱智行为带来的
+编写一个readme.txt文件，内容如下：
+Git is a version control system.
+Git is free software.
+一定要放到learngit目录下（子目录也行），因为这是一个Git仓库，放到其他地方Git再厉害也找不到这个文件。
+ 第1步 用命令git add告诉Git，把文件添加到仓库：
+$ git add readme.txt
+执行上面的命令，没有任何显示，这就对了，Unix的哲学是“没有消息就是好消息”，说明添加成功。当然页可以用git status查看当前状态。
+第2步，用命令git commit告诉Git，把文件提交到仓库：
+$ git commit -m "add a readme file"
+[master (root-commit) 95e40f5] add a readme file
+ 1 file changed, 2 insertions(+)
+ create mode 100644 readme.txt
+简单解释一下git commit命令，-m后面输入的是本次提交的说明，可以输入任意内容，当然最好是有意义的，这样你就能从历史记录里方便地找到改动记录。
+嫌麻烦不想输入-m "xxx"行不行？确实有办法可以这么干，但是强烈不建议你这么干，因为输入说明对自己对别人阅读都很重要。实在不想输入说明的童鞋请自行Google，我不告诉你这个参数（查了未：git commit -a --allow-empty-message -m ''）。
+git commit命令执行成功后会告诉你，1 file changed：1个文件被改动（我们新添加的readme.txt文件）；2 insertions：插入了两行内容（readme.txt有两行内容）。
+为什么Git添加文件需要add，commit一共两步呢？因为commit可以一次提交很多文件，所以你可以多次add不同的文件，比如：
+$ git add file1.txt
+$ git add file2.txt file3.txt
+$ git commit -m "add 3 files."
+
+小结
+git add用于将修改行为放入待提交状态
+git commit用于将待提交修改正式提交入git
+git status用于检查是否有未提交的修改，是否有未放入待提交状态的修改以及，哪些文件被修改了
+
+疑难解答
+Q：输入git add readme.txt，得到错误：fatal: not a git repository (or any of the parent directories)。
+A：Git命令必须在Git仓库目录内执行（git init除外），在仓库目录外执行是没有意义的。
+Q：输入git add readme.txt，得到错误fatal: pathspec 'readme.txt' did not match any files。
+A：添加某个文件时，该文件必须在当前目录下存在，用ls或者dir命令查看当前目录的文件，看看文件是否存在，或者是否写错了文件名。
+
+小结
+现在总结一下今天学的两点内容：
+初始化一个Git仓库，使用git init命令。
+添加文件到Git仓库，分两步：
+使用命令git add <file>，注意，可反复多次使用，添加多个文件；
+使用命令git commit -m <message>，
+
+问题：git add readme.txt/git commit -m "add a readme file"不成功原因
+懒惰的IT created at April 17, 2022 7:05 PM, Last updated at April 17, 2022 7:05 PM
+1.Windows上的Linux命令行保存文件时有个很弱智的行为，会在.txt后面再加一个后缀名，导致add不到，建议使用VSCode（加上WSL插件）创建readme文件
+2.add前要touch一下
+3.跟我一样用WSL整Git的请注意：先输入你的邮箱和名字（当然可以随便写一个），格式为：
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+（虽然我在Windows上有Git，但前面几章有个评论看的我的不想用Windows的Git了，干脆直接用WSL，反正也方便）
+
+时光穿梭机
+小结：
+要随时掌握工作区的状态，使用git status命令。
+如果git status告诉你有文件被修改过，用git diff可以查看修改内容。
+
+3、版本回退
+查看历史记录
+$git log
+如果嫌输出信息太多，看得眼花缭乱的，可以试试加上--pretty=oneline参数：
+$ git log --pretty=oneline
+
+Git每提交一个新版本，实际上Git就会把它们自动串成一条时间线。如果使用可视化工具查看Git历史，就可以更清楚地看到提交历史的时间线：
+好了，现在我们启动时光穿梭机，准备回退到上一个版本，怎么做呢？
+首先，Git必须知道当前版本是哪个版本，在Git中，用HEAD表示当前版本，也就是最新的提交1094adb...（注意我的提交ID和你的肯定不一样），上一个版本就是HEAD^，上上一个版本就是HEAD^^，当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100
+回退到上一个版本
+$ git reset --hard HEAD^  
+
+最新的那个版本已经看不到了！好比你从21世纪坐时光穿梭机来到了19世纪，想再回去已经回不去了，肿么办？
+办法其实还是有的，只要上面的命令行窗口还没有被关掉，你就可以顺着往上找啊找啊，找到那个append GPL的commit id是afd1a0884c750b804eceba0b6b260253e97c190c，于是就可以指定回到未来的某个版本：
+$ git reset --hard afd1a0884c750b804eceba0b6b260253e97c190c
+版本号没必要写全，前几位就可以了，Git会自动去找。当然也不能只写前一两位，因为Git可能会找到多个版本号，就无法确定是哪一个了。
+
+现在，你回退到了某个版本，关掉了电脑，第二天早上就后悔了，想恢复到新版本怎么办？找不到新版本的commit id怎么办？
+在Git中，总是有后悔药可以吃的。当你用$ git reset --hard HEAD^回退到add distributed版本时，再想恢复到append GPL，就必须找到append GPL的commit id。Git提供了一个命令git reflog用来记录你的每一次命令：
+$ git reflog
+
+cat 文件名，可以查看文件内容
+$ cat readme.txt
+
+总结一下：
+HEAD指向的版本就是当前版本，因此，Git允许我们在版本的历史之间穿梭，使用命令git reset --hard commit_id。
+穿梭前，用git log可以查看提交历史，以便确定要回退到哪个版本。
+要重返未来，用git reflog查看命令历史，以便确定要回到未来的哪个版本
+
+4、工作区和暂存区
+Git和其他版本控制系统如SVN的一个不同之处就是有暂存区的概念。
+
+先来看名词解释。
+工作区（Working Directory）
+就是你在电脑里能看到的目录，比如我的learngit文件夹就是一个工作区
+
+版本库（Repository）
+工作区有一个隐藏目录.git，这个不算工作区，而是Git的版本库。
+Git的版本库里存了很多东西，其中最重要的就是称为stage（或者叫index）的暂存区，还有Git为我们自动创建的第一个分支master，以及指向master的一个指针叫HEAD。
+前面讲了我们把文件往Git版本库里添加的时候，是分两步执行的：
+第一步是用git add把文件添加进去，实际上就是把文件修改添加到暂存区；
+第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。
+因为我们创建Git版本库时，Git自动为我们创建了唯一一个master分支，所以，现在，git commit就是往master分支上提交更改。
+你可以简单理解为，需要提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改。
+git add .  可以把文件的修改，添加，删除等操作一次性添加到暂存区。
+
+工作区>>>>暂存区>>>>仓库和操作指令
+九只蜗牛Leo created at December 2, 2019 11:10 AM, Last updated at April 1, 2022 5:47 PM
+感觉大家把简单问题复杂化了，看着头晕，
+Git管理的文件分为：工作区，版本库，版本库又分为暂存区stage和暂存区分支master(仓库)
+工作区>>>>暂存区>>>>仓库
+git add把文件从工作区>>>>暂存区，git commit把文件从暂存区>>>>仓库，
+git diff查看工作区和暂存区差异，
+git diff --cached查看暂存区和仓库差异，
+git diff HEAD 查看工作区和仓库的差异，
+git add的反向命令git checkout . 就是把工作区的修改撤销
+git commit的反向命令git reset HEAD，就是把暂存区的修改撤销。
+
+硬着头皮呀
+Created at February 19, 2022 11:29 AM
+九只蜗牛Leo的说法是对的，不过对于git diff我再补充一点：
+git diff 时是分为两种情况的：暂存区为空和暂存区不为空。
+首先我们明确知道git diff是比较工作区和暂存区的文件的，如果此时暂存区为空，那么稍微有点不同，即：
+1. 暂存区为空使用git diff：因为此时暂存区为空，此时使用git diff同样也是比较工作区和仓库，即和使用git diff HEAD结果相同
+2 .暂存区不为空使用git diff:因为此时暂存区不为空，此时使用git diff比较的就是工作区和暂存区
+
+
+zjsonic6
+Created at July 4, 2018 7:30 PM
+感觉你们说的都不对，官网pdf中文文档P27不是讲的很清楚吗？
+git diff比较的是工作目录中当前文件和暂存区域快照之间的差异， 也就是修改之后还没有暂存起来的变化内容。若要查看已暂存的将要添加到下次提交里的内容，可以用 git diff --cached 命令。
+请注意，git diff 本身只显示尚未暂存的改动，而不是自上次提交以来所做的所有改动。 所以有时候你一下子暂存了所有更新过的文件后，运行 git diff 后却什么也没有，就是这个原因。
+
+5、管理修改
+现在，假定你已经完全掌握了暂存区的概念。下面，我们要讨论的就是，为什么Git比其他版本控制系统设计得优秀，因为Git跟踪并管理的是修改，而非文件。
+你会问，什么是修改？比如你新增了一行，这就是一个修改，删除了一行，也是一个修改，更改了某些字符，也是一个修改，删了一些又加了一些，也是一个修改，甚至创建一个新文件，也算一个修改。
+我们前面讲了，Git管理的是修改，当你用git add命令后，在工作区的第一次修改被放入暂存区，准备提交，但是，在工作区的第二次修改并没有放入暂存区，所以，git commit只负责把暂存区的修改提交了，也就是第一次的修改被提交了，第二次的修改不会被提交。
+提交后，用git diff HEAD -- readme.txt命令可以查看工作区和版本库里面最新版本的区别
+
+对于工作区新文件，为什么git diff没显示
+忘记翅膀的猫_538 created at March 31, 2019 2:18 AM, Last updated at May 24, 2020 8:00 PM
+自己试验了一下。 在工作区新建一个文件，然后使用git diff命令，什么都不显示。 请问这是为什么？工作区不是多出了一个文件吗，为什么与暂存区比较缺没有结果？
+Tiamo普罗旺斯
+Created at May 14, 2019 3:11 PM
+git diff只显示已被add到版本库中的文件，在工作区和暂存区中的内容差异，所以没有显示是因为还没有add，即使是新建的文件。您可以执行下git status看一下区别。
+假蛙工程师
+Created at July 16, 2019 9:54 AM
+原因： git diff <b>显示工作区和暂存区文件的差异</b>！
+首先，你可能没有git add,此时暂存区没有文件，无法比较。
+其次，你已经git add，暂存区有文件，此刻你git diff，由于你现在的工作区文件与刚提交的暂存区的文件没有差异，所以没有任何提示。
+若想有差异，则在git add后，然后修改工作区该文件，再去diff.
+李金泽AllenLi
+Created at August 6, 2019 3:45 PM
+git diff显示工作区和git版本库中最新版本之间的差异，不是暂存区，暂存区是空的。
+黄VS岩39440
+Created at May 7, 2020 11:24 AM
+git status感觉还好用些，新增一个文件后会显示Untracked files:
+山岛峙c
+Created at May 24, 2020 8:00 PM
+我觉得是这个文件没有比较意义，所以diff不显示。因为这是你新建的，又没有前版本，比较啥呢？
+
+6、撤销修改
+小结：
+场景1：当你改乱了工作区某个文件的内容（git add 之前），想直接丢弃工作区的修改时，用命令git checkout -- <file>（git checkout <file>） 或者 git restore -- <file>（git restore <file>）丢弃某一个文件的修改，git checkout . 或者git restore . 丢弃所有文件的修改。
+场景2：当你不但改乱了工作区某个文件的内容，还添加到了暂存区时（git add 之后），想丢弃修改，分两步，第一步用命令git reset HEAD <file> 或者 git restore --staged <file>丢弃暂存区某一个文件的修改git reset HEAD（git reset HEAD .）或者 git restore --staged .丢弃暂存区所有文件的修改 ，就回到了场景1，第二步按场景1操作。
+场景3：已经提交了不合适的修改到版本库时（git commit之后），想要撤销本次提交，参考版本回退一节（git reset --hard HEAD^ 或者 git reset --hard commit_id），不过前提是没有推送到远程库。
+
+在git status没有看到提示命令git checkout -- <file>,而是git restore <file>
+Aubrey·Chen created at June 20, 2020 12:38 AM, Last updated at November 18, 2020 3:48 PM
+在git status没有看到提示命令git checkout -- <file>,而是git restore <file>，那到底用哪个撤销的？是不是Git最新版的才改成这个命令的？
+
+JelarSuperman
+Created at August 19, 2020 3:29 PM
+Git社区发布了Git的新版本2.23。在该版本中，有一个特性非常引人瞩目，就是新版本的Git引入了两个新命令 git switch 和 git restore，用以替代现在的 git checkout。
+git checkout 这个命令承担了太多职责，既被用来切换分支，又被用来恢复工作区文件，对用户造成了很大的认知负担。
+
+ctzlwzg
+Created at November 18, 2020 3:48 PM
+确实提示中显示use "git restore <file>..." to discard changes in working directory   用于撤销
+
+7、删除文件
+在Git中，删除也是一个修改操作，我们实战一下，先添加一个新文件test.txt到Git并且提交：git add test.txt
+现在要删除已经添加到暂存区的test.txt文件应该怎么做？
+方式1：
+一般情况下，你通常直接在文件管理器中把没用的文件删了，或者用rm命令删了：
+$ rm test.txt
+暂存区删除该文件，那就用命令git rm删掉，并且不用git commit（不用提交）：
+$ git rm test.txt
+
+方式2：
+直接在文件管理器中把没用的文件删了，或者用rm命令删了
+$ rm test.txt
+然后给git add test.txt添加到暂存区
+这里不需要git commit 提交（这里只是删除已经添加到暂存区的test.txt文件，如果test.txt 提交了commit到版本库需执行下面的给git commit操作）
+$ git commit -m "remove test.txt"
+
+方式3：
+git rm -f test.txt 强制从暂存区删除
+现在，文件就从版本库中被删除了。
+小提示：先手动删除文件，然后使用git rm <file>和git add<file>效果是一样的。
+
+还有一种情况是删错了（ rm test.txt或者手动删除了test.txt），因为版本库里还有呢，所以可以很轻松地把误删的文件恢复到最新版本：
+
+$ git checkout test.txt(git checkout .) 或者git restore test.txt(git restore .)，其实就是撤销工作区的删除操作
+git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
+
+注意：从来没有被添加到版本库就被删除的文件，是无法恢复的！
+小结
+命令git rm用于删除一个文件。如果一个文件已经被提交到版本库，那么你永远不用担心误删，但是要小心，你只能恢复文件到最新版本，你会丢失最近一次提交后你修改的内容。
+
+rm命令就是在工作区删文件
+git rm -f就是强制删文件，并且把删文件的修改提交到暂存区
+相当于rm删文件后，git add 提交，保存修改
+
+8、远程仓库
+Git是分布式版本控制系统，同一个Git仓库，可以分布到不同的机器上。怎么分布呢？最早，肯定只有一台机器有一个原始版本库，此后，别的机器可以“克隆”这个原始版本库，而且每台机器的版本库其实都是一样的，并没有主次之分。
+你肯定会想，至少需要两台机器才能玩远程库不是？但是我只有一台电脑，怎么玩？
+其实一台电脑上也是可以克隆多个版本库的，只要不在同一个目录下。不过，现实生活中是不会有人这么傻的在一台电脑上搞几个远程库玩，因为一台电脑上搞几个远程库完全没有意义，而且硬盘挂了会导致所有库都挂掉，所以我也不告诉你在一台电脑上怎么克隆多个仓库。
+实际情况往往是这样，找一台电脑充当服务器的角色，每天24小时开机，其他每个人都从这个“服务器”仓库克隆一份到自己的电脑上，并且各自把各自的提交推送到服务器仓库里，也从服务器仓库中拉取别人的提交。
+完全可以自己搭建一台运行Git的服务器，不过现阶段，为了学Git先搭个服务器绝对是小题大作。好在这个世界上有个叫GitHub的神奇的网站，从名字就可以看出，这个网站就是提供Git仓库托管服务的，所以，只要注册一个GitHub账号，就可以免费获得Git远程仓库。
+在继续阅读后续内容前，请自行注册GitHub账号。由于你的本地Git仓库和GitHub仓库之间的传输是通过SSH加密的，所以，需要一点设置：
+第1步：创建SSH Key。在用户主目录下，看看有没有.ssh目录，如果有，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：
+$ ssh-keygen -t rsa -C "youremail@example.com"
+你需要把邮件地址换成你自己的邮件地址，然后一路回车，使用默认值即可，由于这个Key也不是用于军事目的，所以也无需设置密码。
+如果一切顺利的话，可以在用户主目录里（用户主目录在windows中就是 C:\Users\Administrator\，或者你新建了一个用户，那就是 C:\Users\用户名\，或者在git bash 里面输入命令cd ~/.ssh 然后输入命令pwd，可以里看到主目录为：/c/Users/Administrator/.ssh）找到.ssh目录，里面有id_rsa和id_rsa.pub两个文件，这两个就是SSH Key的秘钥对，id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人。
+第2步：登陆GitHub，点击右上角头像，点击“Settings”点击“SSH and GPG key”找到SSH keys 
+然后，点击右上角 New SSH key ”，填上任意Title，在Key文本框里粘贴id_rsa.pub文件的内容：
+为什么GitHub需要SSH Key呢？因为GitHub需要识别出你推送的提交确实是你推送的，而不是别人冒充的，而Git支持SSH协议，所以，GitHub只要知道了你的公钥，就可以确认只有你自己才能推送。
+当然，GitHub允许你添加多个Key。假定你有若干电脑，你一会儿在公司提交，一会儿在家里提交，只要把每台电脑的Key都添加到GitHub，就可以在每台电脑上往GitHub推送了。
+最后友情提示，在GitHub上免费托管的Git仓库，任何人都可以看到喔（但只有你自己才能改）。所以，不要把敏感信息放进去。
+如果你不想让别人看到Git库，有两个办法，一个是交点保护费，让GitHub把公开的仓库变成私有的，这样别人就看不见了（不可读更不可写）。另一个办法是自己动手，搭一个Git服务器，因为是你自己的Git服务器，所以别人也是看不见的。这个方法我们后面会讲到的，相当简单，公司内部开发必备。
+
+
+9、添加远程库
+现在的情景是，你已经在本地创建了一个Git仓库后，又想在GitHub创建一个Git仓库，并且让这两个仓库进行远程同步，这样，GitHub上的仓库既可以作为备份，又可以让其他人通过该仓库来协作，真是一举多得。
+
+首先，登陆GitHub，然后，在右上角点击➕然后点击New repository后显示Create a new repository页面
+在Repository name填入learngit，其他保持默认设置，点击“Create repository”按钮，就成功地创建了一个新的Git仓库：
+目前，在GitHub上的这个learngit仓库还是空的，GitHub告诉我们，可以从这个仓库克隆出新的仓库，也可以把一个已有的本地仓库与之关联，然后，把本地仓库的内容推送到GitHub仓库。
+空仓库提示如下：
+1、…or create a new repository on the command line
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main  //修改主分支名msater名称为main
+git remote add origin git@github.com:caoboda/learngit.git   //把一个已有的本地仓库与远程仓库git@github.com:caoboda/learngit.git关联
+git push -u origin main// 把本地仓库的内容推送到GitHub仓库主分支main分支
+2、…or push an existing repository from the command line
+git remote add origin git@github.com:caoboda/learngit.git
+git branch -M main
+git push -u origin main
+
+现在，我们根据GitHub的提示，在本地的learngit仓库下运行命令把一个已有的本地仓库与远程仓库关联：
+$ git remote add origin git@github.com:caoboda/learngit.git
+请千万注意，把上面的.com：后面替换成你自己的GitHub账户名，否则，你在本地关联的就是我的远程库，关联没有问题，但是你以后推送是推不上去的，因为你的SSH Key公钥不在我的账户列表中。
+添加后，远程库的名字就是origin，这是Git默认的叫法，也可以改成别的，但是origin这个名字一看就知道是远程库。
+
+下一步，就可以把本地库的所有内容推送到远程库上：
+$ git push -u origin master
+把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。
+由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。
+推送成功后，可以立刻在GitHub页面中看到远程库的内容已经和本地一模一样：
+从现在起，只要本地作了提交，就可以通过命令：
+$ git push origin master
+把本地master分支的最新修改推送至GitHub，现在，你就拥有了真正的分布式版本库！
+
+SSH警告
+当你第一次使用Git的clone或者push命令连接GitHub时，会得到一个警告：
+The authenticity of host 'github.com (xx.xx.xx.xx)' can't be established.
+RSA key fingerprint is xx.xx.xx.xx.xx.
+Are you sure you want to continue connecting (yes/no)?
+这是因为Git使用SSH连接，而SSH连接在第一次验证GitHub服务器的Key时，需要你确认GitHub的Key的指纹信息是否真的来自GitHub的服务器，输入yes回车即可。
+Git会输出一个警告，告诉你已经把GitHub的Key添加到本机的一个信任列表里了：
+Warning: Permanently added 'github.com' (RSA) to the list of known hosts.
+这个警告只会出现一次，后面的操作就不会有任何警告了。
+如果你实在担心有人冒充GitHub服务器，输入yes前可以对照GitHub的RSA Key的指纹信息是否与SSH连接给出的一致。
+
+删除远程库
+如果添加的时候地址写错了，或者就是想删除远程库，可以用git remote rm <name>命令。使用前，建议先用git remote -v查看远程库信息：
+$ git remote -v
+origin  git@github.com:caoboda/learngit.git (fetch)
+origin  git@github.com:caoboda/learngit.git (push)
+然后，根据名字删除，比如删除origin：
+$ git remote rm origin
+此处的“删除”其实是解除了本地和远程的绑定关系，并不是物理上删除了远程库。远程库本身并没有任何改动。要真正删除远程库，需要登录到GitHub，在后台页面找到删除按钮再删除。
+
+小结
+要关联一个远程库，使用命令git remote add origin git@server-name:path/repo-name.git；
+关联一个远程库时必须给远程库指定一个名字，origin是默认习惯命名；
+关联后，使用命令git push -u origin master把本地的master分支所有内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来；
+此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
+分布式版本系统的最大好处之一是在本地工作完全不需要考虑远程库的存在，也就是有没有联网都可以正常工作，而SVN在没有联网的时候是拒绝干活的！当有网络的时候，再把本地提交推送一下就完成了同步，真是太方便了！
+
+10、从远程库克隆
+远程库从github找一个如：git@github.com:caoboda/gitStudy.git，下一步是用命令git clone克隆一个本地库
+$ git clone git@github.com:caoboda/gitStudy.git
+
+如果有多个人协作开发，那么每个人各自从远程克隆一份就可以了。
+你也许还注意到，GitHub给出的地址不止一个，还可以用https://github.com/caoboda/gitStudy.git这样的地址。实际上，Git支持多种协议，默认的git://使用ssh，但也可以使用https等其他协议。
+使用https除了速度慢以外，还有个最大的麻烦是每次推送都必须输入口令，但是在某些只开放http端口的公司内部就无法使用ssh协议而只能用https。
+小结
+要克隆一个仓库，首先必须知道仓库的地址，然后使用git clone命令克隆。
+Git支持多种协议，包括https，但ssh协议速度最快。
+
+11、分支管理
+分支就是科幻电影里面的平行宇宙，当你正在电脑前努力学习Git的时候，另一个你正在另一个平行宇宙里努力学习SVN。
+如果两个平行宇宙互不干扰，那对现在的你也没啥影响。不过，在某个时间点，两个平行宇宙合并了，结果，你既学会了Git又学会了SVN！
+分支在实际中有什么用呢？假设你准备开发一个新功能，但是需要两周才能完成，第一周你写了50%的代码，如果立刻提交，由于代码还没写完，不完整的代码库会导致别人不能干活了。如果等代码全部写完再一次提交，又存在丢失每天进度的巨大风险。
+现在有了分支，就不用怕了。你创建了一个属于你自己的分支，别人看不到，还继续在原来的分支上正常工作，而你在自己的分支上干活，想提交就提交，直到开发完毕后，再一次性合并到原来的分支上，这样，既安全，又不影响别人工作。
+其他版本控制系统如SVN等都有分支管理，但是用过之后你会发现，这些版本控制系统创建和切换分支比蜗牛还慢，简直让人无法忍受，结果分支功能成了摆设，大家都不去用。
+但Git的分支是与众不同的，无论创建、切换和删除分支，Git在1秒钟之内就能完成！无论你的版本库是1个文件还是1万个文件。
+
+12、创建与合并分支
+在版本回退里，你已经知道，每次提交，Git都把它们串成一条时间线，这条时间线就是一个分支。截止到目前，只有一条时间线，在Git里，这个分支叫主分支，即master分支。HEAD严格来说不是指向提交，而是指向master，master才是指向提交的，所以，HEAD指向的就是当前分支。
+一开始的时候，master分支是一条线，Git用master指向最新的提交，再用HEAD指向master，就能确定当前分支，以及当前分支的提交点：
+每次提交，master分支都会向前移动一步，这样，随着你不断提交，master分支的线也越来越长。
+当我们创建新的分支，例如dev时，Git新建了一个指针叫dev，指向master相同的提交，再把HEAD指向dev，就表示当前分支在dev上：
+你看，Git创建一个分支很快，因为除了增加一个dev指针，改改HEAD的指向，工作区的文件都没有任何变化！
+不过，从现在开始，对工作区的修改和提交就是针对dev分支了，比如新提交一次后，dev指针往前移动一步，而master指针不变：
+假如我们在dev上的工作完成了，就可以把dev合并到master上。Git怎么合并呢？最简单的方法，就是直接把master指向dev的当前提交，就完成了合并：
+所以Git合并分支也很快！就改改指针，工作区内容也不变！
+合并完分支后，甚至可以删除dev分支。删除dev分支就是把dev指针给删掉，删掉后，我们就剩下了一条master分支：
+
+switch
+我们注意到切换分支使用git checkout <branch>，而前面讲过的撤销修改则是git checkout -- <file>，同一个命令，有两种作用，确实有点令人迷惑。
+实际上，切换分支这个动作，用switch更科学。因此，最新版本的Git提供了新的git switch命令来切换分支：
+创建并切换到新的dev分支，可以使用：
+$ git switch -c dev
+直接切换到已有的master分支，可以使用：
+$ git switch master
+使用新的git switch命令，比git checkout要更容易理解。
+
+小结
+Git鼓励大量使用分支：
+查看分支：git branch
+创建分支：git branch <name>
+切换分支：git checkout <name>或者git switch <name>
+创建+切换分支：git checkout -b <name>或者git switch -c <name>
+合并某分支到当前分支：git merge <name>
+删除分支：git branch -d <name>
+
+13、解决冲突
+两个分支提交的文件存在冲突，必须手动解决冲突后再提交。git status也可以告诉我们冲突的文件：
+解决冲突并提交后可以用带参数的git log也可以看到分支的合并情况：git log --graph --pretty=oneline --abbrev-commit（ 不使用--abbrev-commit 时log显示完整的commitid）
+小结
+当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。
+解决冲突就是把Git合并失败的文件手动编辑为我们希望的内容，再提交。
+用git log --graph命令可以看到分支合并图。
+
+14、分支管理策略
+通常，合并分支时，如果可能，Git会用Fast forward模式，但这种模式下，删除分支后，会丢掉分支信息。
+如果要强制禁用Fast forward模式，Git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息。
+下面我们实战一下--no-ff方式的git merge：
+首先，仍然创建并切换dev分支：
+$ git switch -c dev
+Switched to a new branch 'dev'
+修改readme.txt文件，并提交一个新的commit：
+
+$ git add readme.txt 
+$ git commit -m "add merge"
+[dev f52c633] add merge
+ 1 file changed, 1 insertion(+)
+现在，我们切换回master：
+
+$ git switch master
+Switched to branch 'master'
+准备合并dev分支，请注意--no-ff参数，表示禁用Fast forward：
+
+$ git merge --no-ff -m "merge with no-ff" dev
+Merge made by the 'recursive' strategy.
+ readme.txt | 1 +
+ 1 file changed, 1 insertion(+)
+因为本次合并要创建一个新的commit，所以加上-m参数，把commit描述写进去。
+合并后，我们用git log看看分支历史：
+$ git log --graph --pretty=oneline --abbrev-commit
+
+分支策略
+在实际开发中，我们应该按照几个基本原则进行分支管理：
+首先，master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活；
+那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本；
+你和你的小伙伴们每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了。
+小结
+Git分支十分强大，在团队开发中应该充分应用。
+合并分支时，加上--no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并。
+
+15、bug分支
+软件开发中，bug就像家常便饭一样。有了bug就需要修复，在Git中，由于分支是如此的强大，所以，每个bug都可以通过一个新的临时分支来修复，修复后，合并分支，然后将临时分支删除。
+当你接到一个修复一个代号101的bug的任务时，很自然地，你想创建一个分支issue-101来修复它，但是，等等，当前正在dev上进行的工作还没有提交：
+并不是你不想提交，而是工作只进行到一半，还没法提交，预计完成还需1天时间。但是，必须在两个小时内修复该bug，怎么办？
+幸好，Git还提供了一个stash功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作：
+$ git stash
+现在，用git status查看工作区，就是干净的（除非有没有被Git管理的文件），因此可以放心地创建分支来修复bug。
+首先确定要在哪个分支上修复bug，假定需要在master分支上修复，就从master创建临时分支：
+$ git checkout master
+Switched to branch 'master'
+Your branch is ahead of 'origin/master' by 6 commits.
+  (use "git push" to publish your local commits)
+
+$ git checkout -b issue-101
+Switched to a new branch 'issue-101'
+现在修复bug，需要把“Git is free software ...”改为“Git is a free software ...”，然后提交：
+$ git add readme.txt 
+$ git commit -m "fix bug 101"
+[issue-101 4c805e2] fix bug 101
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+修复完成后，切换到master分支，并完成合并，最后删除issue-101分支：
+
+$ git switch master
+Switched to branch 'master'
+Your branch is ahead of 'origin/master' by 6 commits.
+  (use "git push" to publish your local commits)
+
+$ git merge --no-ff -m "merged bug fix 101" issue-101
+Merge made by the 'recursive' strategy.
+ readme.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+太棒了，原计划两个小时的bug修复只花了5分钟！现在，是时候接着回到dev分支干活了！
+$ git switch dev
+Switched to branch 'dev'
+
+$ git status
+On branch dev
+nothing to commit, working tree clean
+工作区是干净的，刚才的工作现场存到哪去了？用git stash list命令看看：
+$ git stash list
+stash@{0}: WIP on dev: f52c633 add merge
+工作现场还在，Git把stash内容存在某个地方了，但是需要恢复一下，有两个办法：
+一是用git stash apply恢复，但是恢复后，stash内容并不删除，你需要用git stash drop来删除；
+另一种方式是用git stash pop，恢复的同时把stash内容也删了：
+$ git stash pop
+On branch dev
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   hello.py
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   readme.txt
+
+Dropped refs/stash@{0} (5d677e2ee266f39ea296182fb2354265b91b3b2a)
+再用git stash list查看，就看不到任何stash内容了：
+$ git stash list
+你可以多次stash，恢复的时候，先用git stash list查看，然后恢复指定的stash，用命令：
+$ git stash apply stash@{0}
+
+
+16、Bug分支
+最后更新: 2018/5/19 22:23 / 阅读: 72551196
+软件开发中，bug就像家常便饭一样。有了bug就需要修复，在Git中，由于分支是如此的强大，所以，每个bug都可以通过一个新的临时分支来修复，修复后，合并分支，然后将临时分支删除。
+
+当你接到一个修复一个代号101的bug的任务时，很自然地，你想创建一个分支issue-101来修复它，但是，等等，当前正在dev上进行的工作还没有提交：
+
+$ git status
+On branch dev
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   hello.py
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   readme.txt
+并不是你不想提交，而是工作只进行到一半，还没法提交，预计完成还需1天时间。但是，必须在两个小时内修复该bug，怎么办？
+
+幸好，Git还提供了一个stash功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作：
+
+$ git stash
+Saved working directory and index state WIP on dev: f52c633 add merge
+现在，用git status查看工作区，就是干净的（除非有没有被Git管理的文件），因此可以放心地创建分支来修复bug。
+
+首先确定要在哪个分支上修复bug，假定需要在master分支上修复，就从master创建临时分支：
+
+$ git checkout master
+Switched to branch 'master'
+Your branch is ahead of 'origin/master' by 6 commits.
+  (use "git push" to publish your local commits)
+
+$ git checkout -b issue-101
+Switched to a new branch 'issue-101'
+现在修复bug，需要把“Git is free software ...”改为“Git is a free software ...”，然后提交：
+
+$ git add readme.txt 
+$ git commit -m "fix bug 101"
+[issue-101 4c805e2] fix bug 101
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+修复完成后，切换到master分支，并完成合并，最后删除issue-101分支：
+
+$ git switch master
+Switched to branch 'master'
+Your branch is ahead of 'origin/master' by 6 commits.
+  (use "git push" to publish your local commits)
+
+$ git merge --no-ff -m "merged bug fix 101" issue-101
+Merge made by the 'recursive' strategy.
+ readme.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+太棒了，原计划两个小时的bug修复只花了5分钟！现在，是时候接着回到dev分支干活了！
+
+$ git switch dev
+Switched to branch 'dev'
+
+$ git status
+On branch dev
+nothing to commit, working tree clean
+工作区是干净的，刚才的工作现场存到哪去了？用git stash list命令看看：
+
+$ git stash list
+stash@{0}: WIP on dev: f52c633 add merge
+工作现场还在，Git把stash内容存在某个地方了，但是需要恢复一下，有两个办法：
+
+一是用git stash apply恢复，但是恢复后，stash内容并不删除，你需要用git stash drop来删除；
+
+另一种方式是用git stash pop，恢复的同时把stash内容也删了：
+
+$ git stash pop
+On branch dev
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   hello.py
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   readme.txt
+
+Dropped refs/stash@{0} (5d677e2ee266f39ea296182fb2354265b91b3b2a)
+再用git stash list查看，就看不到任何stash内容了：
+$ git stash list
+你可以多次stash，恢复的时候，先用git stash list查看，然后恢复指定的stash，用命令：
+$ git stash apply stash@{0}
+
+在master分支上修复了bug后，我们要想一想，dev分支是早期从master分支分出来的，所以，这个bug其实在当前dev分支上也存在。
+那怎么在dev分支上修复同样的bug？重复操作一次，提交不就行了？
+有木有更简单的方法？
+有！
+同样的bug，要在dev上修复，我们只需要把4c805e2 fix bug 101这个提交所做的修改“复制”到dev分支。注意：我们只想复制4c805e2 fix bug 101这个提交所做的修改，并不是把整个master分支merge过来。
+为了方便操作，Git专门提供了一个cherry-pick命令，让我们能复制一个特定的提交到当前分支：
+$ git branch
+* dev
+  master
+$ git cherry-pick 4c805e2
+[master 1d4b803] fix bug 101
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Git自动给dev分支做了一次提交，注意这次提交的commit是1d4b803，它并不同于master的4c805e2，因为这两个commit只是改动相同，但确实是两个不同的commit。用git cherry-pick，我们就不需要在dev分支上手动再把修bug的过程重复一遍。
+有些聪明的童鞋会想了，既然可以在master分支上修复bug后，在dev分支上可以“重放”这个修复过程，那么直接在dev分支上修复bug，然后在master分支上“重放”行不行？当然可以，不过你仍然需要git stash命令保存现场，才能从dev分支切换到master分支。
+
+小结
+修复bug时，我们会通过创建新的bug分支进行修复，然后合并，最后删除；
+当手头工作没有完成时，先把工作现场git stash一下，然后去修复bug，修复后，再git stash pop（多次stash后，根据git stash list查看，然后再多次git stash pop），回到工作现场；
+在master分支上修复的bug，想要合并到当前dev分支，可以用git cherry-pick <commit>命令，把bug提交的修改“复制”到当前分支，避免重复劳动。
+
+修复分支可否直接跟dev分支合并？
+用户6872007598 created at May 17, 2020 12:39 PM, Last updated at November 14, 2022 5:39 PM
+既然Bug分支是从master最新提交创建出来的，那么想要在dev分支修复同样的Bug，是可以直接把issue-101分支直接合并到dev分支，不使用cherry-pick也同样能达到目的？
+
+廖雪峰
+Created at May 17, 2020 12:52 PM
+一般来说，dev分支比master要新很多，比如改了a，b，c，d，e共5个文件
+issue-101是从master拉出来的，然后改了f文件，这个时候，你把issue-101往dev合并，直接合不上去，必须先把dev的修改合到issue-101，再反过来合到dev
+还不如只把改动单独应用到dev来得简单，因为可能有冲突，而cherry-pick只解决小改动的冲突
+
+
+17、Feature分支
+软件开发中，总有无穷无尽的新的功能要不断添加进来。
+添加一个新功能时，你肯定不希望因为一些实验性质的代码，把主分支搞乱了，所以，每添加一个新功能，最好新建一个feature分支，在上面开发，完成后，合并，最后，删除该feature分支。
+一切顺利的话，feature分支和bug分支是类似的，合并，然后删除。
+但是！
+就在此时，接到上级命令，因经费不足，新功能必须取消！
+虽然白干了，但是这个包含机密资料的分支还是必须就地销毁：
+$ git branch -d feature
+error: The branch 'feature-vulcan' is not fully merged.
+If you are sure you want to delete it, run 'git branch -D feature'.
+销毁失败。Git友情提醒，feature-vulcan分支还没有被合并，如果删除，将丢失掉修改，如果要强行删除，需要使用大写的-D参数。。
+现在我们强行删除：
+
+小结
+开发一个新feature，最好新建一个分支；
+如果要丢弃一个没有被合并过的分支，可以通过git branch -D <name>强行删除。
+
+18、多人协作
+当你从远程仓库克隆时，实际上Git自动把本地的master分支和远程的master分支对应起来了，并且，远程仓库的默认名称是origin。
+要查看远程库的信息，用git remote：
+$ git remote
+origin
+或者，用git remote -v显示更详细的信息：
+$ git remote -v
+origin  git@github.com:caoboda/learngit.git (fetch)
+origin  git@github.com:caoboda/learngit.git (push)
+上面显示了可以抓取和推送的origin的地址。如果没有推送权限，就看不到push的地址。
+
+推送分支
+推送分支，就是把该分支上的所有本地提交推送到远程库。推送时，要指定本地分支，这样，Git就会把该分支推送到远程库对应的远程分支上：
+$ git push origin master
+如果要推送其他分支，比如dev，就改成：
+$ git push origin dev
+
+但是，并不是一定要把本地分支往远程推送，那么，哪些分支需要推送，哪些不需要呢？
+master分支是主分支，因此要时刻与远程同步；
+dev分支是开发分支，团队所有成员都需要在上面工作，所以也需要与远程同步；
+bug分支只用于在本地修复bug，就没必要推到远程了，除非老板要看看你每周到底修复了几个bug；
+feature分支是否推到远程，取决于你是否和你的小伙伴合作在上面开发。
+总之，就是在Git中，分支完全可以在本地自己藏着玩，是否推送，视你的心情而定！
+
+抓取分支
+多人协作时，大家都会往master和dev分支上推送各自的修改。
+现在，模拟一个你的小伙伴，可以在另一台电脑（注意要把SSH Key添加到GitHub）或者同一台电脑的另一个目录下克隆：
+$ git clone git@github.com:caoboda/learngit.git
+Cloning into 'learngit'...
+remote: Enumerating objects: 29, done.
+remote: Counting objects: 100% (29/29), done.
+remote: Compressing objects: 100% (20/20), done.
+remote: Total 29 (delta 3), reused 29 (delta 3), pack-reused 0
+Receiving objects: 100% (29/29), 4.79 KiB | 2.39 MiB/s, done.
+Resolving deltas: 100% (3/3), done.
+然后进入learngit目录
+$ cd learngit/
+当你的小伙伴从远程库clone时，默认情况下，你的小伙伴只能看到本地的master分支。不信可以用git branch命令看看：
+$ git branch
+* master
+现在，你的小伙伴要在dev分支上开发，就必须创建远程origin的dev
+(前提是远程dev已经创建了，否则要先创建本地dev，然后把本地dev推送到远程dev，并设置本地dev和远程dev关联
+代码为：git checkout -b dev   //先创建本地dev并切换到本地dev分支
+             git push origin dev  //提交该分支到远程仓库
+             git branch --set-upstream-to=origin/dev dev   //置本地dev和远程dev关联
+)
+分支到本地，于是他用这个命令创建本地dev分支：
+$ git checkout -b dev origin/dev
+现在，他就可以在dev上继续修改，然后，时不时地把dev分支push到远程：
+$  git add .
+$ git commit -m "update xxx.txt"
+[dev 7a5e5dd] add env
+ 1 file changed, 1 insertion(+)
+ create mode 100644 env.txt
+
+$ git push origin dev
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 308 bytes | 308.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To github.com:caoboda/learngit.git
+   f52c633..7a5e5dd  dev -> dev
+
+你的小伙伴已经向origin/dev分支推送了他的提交，而碰巧你也对同样的文件作了修改，并试图推送：
+
+$ cat env.txt
+env
+
+$ git add env.txt
+
+$ git commit -m "add new env"
+[dev 7bd91f1] add new env
+ 1 file changed, 1 insertion(+)
+ create mode 100644 env.txt
+
+$ git push origin dev
+To github.com:michaelliao/learngit.git
+ ! [rejected]        dev -> dev (non-fast-forward)
+error: failed to push some refs to 'git@github.com:michaelliao/learngit.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+推送失败，因为你的小伙伴的最新提交和你试图推送的提交有冲突，解决办法也很简单，Git已经提示我们，先用git pull把最新的提交从origin/dev抓下来，然后，在本地合并，解决冲突，再推送：
+
+$ git pull
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+git branch --set-upstream-to=origin/<branch> dev
+git pull也失败了，原因是没有指定本地dev分支与远程origin/dev分支的链接，根据提示，设置dev和origin/dev的链接：
+
+$ git branch --set-upstream-to=origin/dev dev
+Branch 'dev' set up to track remote branch 'dev' from 'origin'.
+再pull：
+
+$ git pull
+Auto-merging env.txt
+CONFLICT (add/add): Merge conflict in env.txt
+Automatic merge failed; fix conflicts and then commit the result.
+这回git pull成功，但是合并有冲突，需要手动解决，解决的方法和分支管理中的解决冲突完全一样。解决后，提交，再push：
+
+$ git commit -m "fix xxx.txt conflict"
+[dev 57c53ab] fix  xxx.txt conflict
+
+$ git push origin dev
+Counting objects: 6, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (6/6), 621 bytes | 621.00 KiB/s, done.
+Total 6 (delta 0), reused 0 (delta 0)
+To github.com:caoboda/learngit.git
+   7a5e5dd..57c53ab  dev -> dev
+
+因此，多人协作的工作模式通常是这样：
+首先，可以试图用git push origin <branch-name>推送自己的修改；
+如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；
+如果合并有冲突，则解决冲突，并在本地提交；
+没有冲突或者解决掉冲突后，再用git push origin <branch-name>推送就能成功！
+如果git pull提示no tracking information，则说明本地分支和远程分支的链接关系没有创建，用命令git branch --set-upstream-to=origin/<branch-name> <branch-name> 。
+这就是多人协作的工作模式，一旦熟悉了，就非常简单。
+
+小结
+查看远程库信息，使用git remote -v；
+本地新建的分支如果不推送到远程，对其他人就是不可见的；
+从本地推送分支，使用git push origin branch-name，如果推送失败，先用git pull抓取远程的新提交；
+在本地创建和远程分支对应的分支，使用git checkout -b branch-name origin/branch-name，本地和远程分支的名称最好一致；
+建立本地分支和远程分支的关联，使用git branch --set-upstream-to=origin/<branch-name> <branch-name>；
+从远程抓取分支，使用git pull，如果有冲突，要先处理冲突。
+
+19、Rebase
+在上一节我们看到了，多人在同一个分支上协作时，很容易出现冲突。即使没有冲突，后push的童鞋不得不先pull，在本地合并，然后才能push成功。
+每次合并再push后，分支变成了这样：
+$ git log --graph --pretty=oneline --abbrev-commit
+*   e052c22 (HEAD -> dev, origin/dev) fix xxx.txt conflict
+|\
+| * 039ad11 update xxx
+* | a8cf842 update xxx.txt ...
+|/
+* 9ed90c3 update xxx.txt
+* 4787cd3 (origin/master, origin/HEAD, master) 本地Git仓库和远程Git仓库远程同步
+成功
+* f442916 xxx
+* 21320f6 git tracks changes
+* 76fde66 understand how stage works
+* 16d0115 workspace and repository
+* afd1a08 修改test.doc内容
+* 198b15d 测试doc文件能不能跟踪文件内容的变化
+* 2d11010
+* 95e40f5 add a readme file
+
+总之看上去很乱，有强迫症的童鞋会问：为什么Git的提交历史不能是一条干净的直线？
+其实是可以做到的！
+Git有一种称为rebase的操作，有人把它翻译成“变基”。
+git rebase操作的特点：把分叉的提交历史“整理”成一条直线，看上去更直观。缺点是本地的分叉提交已经被修改过了。
+rebase操作的特点：把本地未push的分叉的提交历史“整理”成一条直线，看上去更直观。缺点是本地的分叉提交已经被修改过了。
+
+小结
+rebase操作可以把本地未push的分叉提交历史整理成直线；
+rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比。
+
+20、标签管理
+发布一个版本时，我们通常先在版本库中打一个标签（tag），这样，就唯一确定了打标签时刻的版本。将来无论什么时候，取某个标签的版本，就是把那个打标签的时刻的历史版本取出来。所以，标签也是版本库的一个快照。
+Git的标签虽然是版本库的快照，但其实它就是指向某个commit的指针（跟分支很像对不对？但是分支可以移动，标签不能移动），所以，创建和删除标签都是瞬间完成的。
+Git有commit，为什么还要引入tag？
+“请把上周一的那个版本打包发布，commit号是6a5819e...”
+“一串乱七八糟的数字不好找！”
+如果换一个办法：
+“请把上周一的那个版本打包发布，版本号是v1.2”
+“好的，按照tag v1.2查找commit就行！”
+所以，tag就是一个让人容易记住的有意义的名字，它跟某个commit绑在一起。
+
+
+21、创建标签
+在Git中打标签非常简单，首先，切换到需要打标签的分支上：
+$ git branch
+* dev
+  master
+$ git checkout master
+Switched to branch 'master'
+然后，敲命令git tag <name>就可以打一个新标签：
+$ git tag v1.0
+可以用命令git tag查看所有标签：
+
+$ git tag
+v1.0
+默认标签是打在最新提交的commit上的。有时候，如果忘了打标签，比如，现在已经是周五了，但应该在周一打的标签没有打，怎么办？
+
+方法是找到历史提交的commit id，然后打上就可以了：
+$ git log --graph --pretty=oneline --abbrev-commit
+* 4787cd3 (HEAD -> master, tag: v1.0, origin/master, origin/HEAD) 本地Git仓库和
+远程Git仓库远程同步成功
+* f442916 xxx
+* 21320f6 git tracks changes
+* 76fde66 understand how stage works
+* 16d0115 workspace and repository
+* afd1a08 修改test.doc内容
+* 198b15d 测试doc文件能不能跟踪文件内容的变化
+* 2d11010
+* 95e40f5 add a readme file
+
+比方说要对add merge这次提交打标签，它对应的commit id是f52c633，敲入命令：
+$ git tag v0.9 21320f6
+再用命令git tag查看标签：
+$ git tag
+v0.9
+v1.0
+注意，标签不是按时间顺序列出，而是按字母排序的。可以用git show <tagname>查看标签信息：
+$ git show v0.9
+commit 21320f6c4d1ce1da37888c0e1649b072cc6c1bdc (tag: v0.9)
+Author: cbd <610131298@qq.com>
+Date:   Mon Nov 28 14:44:49 2022 +0800
+
+    git tracks changes
+
+diff --git a/xxx.txt b/xxx.txt
+index e69de29..56b6510 100644
+--- a/xxx.txt
++++ b/xxx.txt
+@@ -0,0 +1 @@
++11111
+\ No newline at 
+...
+可以看到，v0.9确实打在git tracks changes这次提交上。
+还可以创建带有说明的标签，用-a指定标签名，-m指定说明文字：
+
+$ git tag -a v0.8 -m "version 0.1 released" f442916
+用命令git show <tagname>可以看到说明文字：
+$ git show v0.8
+tag v0.8
+Tagger: cbd <610131298@qq.com>
+Date:   Wed Nov 30 16:18:08 2022 +0800
+
+version 0.1 released
+
+commit f44291658859e4a0331846b6b42aa0790779da51 (tag: v0.8)
+Author: cbd <610131298@qq.com>
+Date:   Mon Nov 28 15:17:59 2022 +0800
+
+    xxx
+
+diff --git a/xxx.txt b/xxx.txt
+index 56b6510..96b4f65 100644
+--- a/xxx.txt
++++ b/xxx.txt
+@@ -1 +1,2 @@
+-11111
+\ No newline at end of file
++11111
++2222
+\ No newline at end of file
+...
+ 注意：标签总是和某个commit挂钩。如果这个commit既出现在master分支，又出现在dev分支，那么在这两个分支上都可以看到这个标签。
+
+小结
+命令git tag <tagname>用于新建一个标签，默认为HEAD，也可以指定一个commit id；
+命令git tag -a <tagname> -m "blablabla..."可以指定标签信息；
+命令git tag可以查看所有标签。
+
+22、操作标签
+如果标签打错了，也可以删除：
+先查看tag
+$ git tag
+v0.8
+v0.9
+v1.0
+然后删除tag
+$ git tag -d v0.8
+Deleted tag 'v0.8' (was 083d939)
+因为创建的标签都只存储在本地，不会自动推送到远程。所以，打错的标签可以在本地安全删除。
+
+如果要推送某个标签到远程，使用命令git push origin <tagname>：
+$ git push origin v1.0
+Total 0 (delta 0), reused 0 (delta 0)
+To github.com:michaelliao/learngit.git
+ * [new tag]         v1.0 -> v1.0
+或者，一次性推送全部尚未推送到远程的本地标签：
+
+$ git push origin --tags
+Total 0 (delta 0), reused 0 (delta 0)
+To github.com:michaelliao/learngit.git
+ * [new tag]         v0.9 -> v0.9
+如果标签已经推送到远程，要删除远程标签就麻烦一点，先从本地删除：
+$ git tag -d v0.9
+Deleted tag 'v0.9' (was f52c633)
+然后，从远程删除。删除命令也是push，但是格式如下：
+
+$ git push origin :refs/tags/v0.9
+To github.com:michaelliao/learngit.git
+ - [deleted]         v0.9
+要看看是否真的从远程库删除了标签，可以登陆GitHub查看。
+
+小结
+命令git push origin <tagname>可以推送一个本地标签；
+命令git push origin --tags可以推送全部未推送过的本地标签；
+命令git tag -d <tagname>可以删除一个本地标签；
+命令git push origin :refs/tags/<tagname>可以删除一个远程标签。
+
+23、使用GitHub
+我们一直用GitHub作为免费的远程仓库，如果是个人的开源项目，放到GitHub上是完全没有问题的。其实GitHub还是一个开源协作社区，通过GitHub，既可以让别人参与你的开源项目，也可以参与别人的开源项目。
+在GitHub出现以前，开源项目开源容易，但让广大人民群众参与进来比较困难，因为要参与，就要提交代码，而给每个想提交代码的群众都开一个账号那是不现实的，因此，群众也仅限于报个bug，即使能改掉bug，也只能把diff文件用邮件发过去，很不方便。
+但是在GitHub上，利用Git极其强大的克隆和分支功能，广大人民群众真正可以第一次自由参与各种开源项目了。
+如何参与一个开源项目呢？比如人气极高的bootstrap项目，这是一个非常强大的CSS框架，你可以访问它的项目主页https://github.com/twbs/bootstrap，点“Fork”就在自己的账号下克隆了一个bootstrap仓库，然后，从自己的账号下clone：
+git clone git@github.com:caoboda/bootstrap.git
+一定要从自己的账号下clone仓库，这样你才能推送修改。如果从bootstrap的作者的仓库地址git@github.com:twbs/bootstrap.git克隆，因为没有权限，你将不能推送修改。
+Bootstrap的官方仓库twbs/bootstrap、你在GitHub上克隆的仓库my/bootstrap，以及你自己克隆到本地电脑的仓库.
+如果你想修复bootstrap的一个bug，或者新增一个功能，立刻就可以开始干活，干完后，往自己的仓库推送。
+如果你希望bootstrap的官方库能接受你的修改，你就可以在GitHub上发起一个pull request。当然，对方是否接受你的pull request就不一定了。
+如果你没能力修改bootstrap，但又想要试一把pull request，那就Fork一下我的仓库：https://github.com/caoboda/learngit，创建一个your-github-id.txt的文本文件，写点自己学习Git的心得，然后推送一个pull request给我，我会视心情而定是否接受。
+
+小结
+在GitHub上，可以任意Fork开源仓库；
+自己拥有Fork后的仓库的读写权限；
+可以推送pull request给官方仓库来贡献代码。
+
+24、使用Gitee
+使用GitHub时，国内的用户经常遇到的问题是访问速度太慢，有时候还会出现无法连接的情况（原因你懂的）。
+如果我们希望体验Git飞一般的速度，可以使用国内的Git托管服务——Gitee（gitee.com）。
+和GitHub相比，Gitee也提供免费的Git仓库。此外，还集成了代码质量检测、项目演示等功能。对于团队协作开发，Gitee还提供了项目管理、代码托管、文档管理的服务，5人以下小团队免费。
+Gitee的免费版本也提供私有库功能，只是有5人的成员上限。
+使用Gitee和使用GitHub类似，我们在Gitee上注册账号并登录后，需要先上传自己的SSH公钥。选择右上角用户头像 -> 设置，在安全设置下选择“SSH公钥”，填写一个便于识别的标题，然后把用户主目录下的.ssh/id_rsa.pub文件的内容粘贴进去：点击“确定”即可完成并看到刚才添加的Key：
+
+如果我们已经有了一个本地的git仓库（例如，一个名为learngit的本地库），如何把它关联到Gitee的远程库上呢？
+首先，我们在Gitee上创建一个新的项目，选择右上角"+"图标 -> 新建仓库，
+项目名称最好与本地库保持一致：
+然后，我们在本地库上使用命令git remote add把它和Gitee的远程库关联：
+git remote add origin git@gitee.com:caoboda/learngit.git
+之后，就可以正常地用git push和git pull推送了！
+
+如果在使用命令git remote add时报错：
+git remote add origin git@gitee.com:caoboda/learngit.git
+fatal: remote origin already exists.
+
+这说明本地库已经关联了一个名叫origin的远程库，此时，可以先用git remote -v查看远程库信息：
+git remote -v
+origin	git@github.com:caoboda/learngit.git (fetch)
+origin	git@github.com:caoboda/learngit.git (push)
+可以看到，本地库已经关联了origin的远程库，并且，该远程库指向GitHub。
+我们可以删除已有的GitHub远程库：
+git remote rm origin
+再关联Gitee的远程库（注意路径中需要填写正确的用户名）：
+git remote add origin git@gitee.com:caoboda/learngit.git
+此时，我们再查看远程库信息：
+git remote -v
+origin	git@gitee.com:caoboda/learngit.git (fetch)
+origin	git@gitee.com:caoboda/learngit.git (push)
+现在可以看到，origin已经被关联到Gitee的远程库了。通过git push命令就可以把本地库推送到Gitee上。
+
+有的小伙伴又要问了，一个本地库能不能既关联GitHub，又关联Gitee呢？
+答案是肯定的，因为git本身是分布式版本控制系统，可以同步到另外一个远程库，当然也可以同步到另外两个远程库。
+使用多个远程库时，我们要注意，git给远程库起的默认名称是origin，如果有多个远程库，我们需要用不同的名称来标识不同的远程库。
+仍然以learngit本地库为例，我们先删除已关联的名为origin的远程库：
+git remote rm origin
+然后，先关联GitHub的远程库：
+git remote add github git@github.com:caoboda/learngit.git
+注意，远程库的名称叫github，不叫origin了。
+接着，再关联Gitee的远程库：
+git remote add gitee git@gitee.com:caoboda/learngit.git
+同样注意，远程库的名称叫gitee，不叫origin。
+现在，我们用git remote -v查看远程库信息，可以看到两个远程库：
+git remote -v
+gitee	git@gitee.com:caoboda/learngit.git (fetch)
+gitee	git@gitee.com:caoboda/learngit.git (push)
+github	git@github.com:caoboda/learngit.git (fetch)
+github	git@github.com:caoboda/learngit.git (push)
+
+如果要推送到GitHub，使用命令：
+git push github master
+如果要推送到Gitee，使用命令：
+git push gitee master
+这样一来，我们的本地库就可以同时与多个远程库互相同步：
+┌─────────┐ ┌─────────┐
+│ GitHub  │ │  Gitee  │
+└─────────┘ └─────────┘
+     ▲           ▲
+     └─────┬─────┘
+           │
+    ┌─────────────┐
+    │ Local Repo  │
+    └─────────────┘
+Gitee也同样提供了Pull request功能，可以让其他小伙伴参与到开源项目中来。你可以通过Fork我的仓库：https://gitee.com/caoboda/learngit，创建一个your-gitee-id.txt的文本文件， 写点自己学习Git的心得，然后推送一个pull request给我，这个仓库会在Gitee和GitHub做双向同步。
+
+25、自定义Git
+1.在Windows上安装Git
+在Windows上使用Git，可以从Git官网直接下载安装程序，然后按默认选项安装即可。
+安装完成后，在开始菜单里找到“Git”->“Git Bash”，蹦出一个类似命令行窗口的东西，就说明Git安装成功！
+安装完成后，还需要最后一步设置，在命令行输入：
+$ git config --global user.name "Your Name"
+$ git config --global user.email "email@example.com"
+因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。
+注意git config命令的--global参数，用了这个参数，表示你这台机器上所有的Git仓库都会使用这个配置，当然也可以对某个仓库指定不同的用户名和Email地址。
+
+2.除了上面的安装Git，我们已经配置了user.name和user.email，实际上，Git还有很多可配置项。
+比如，让Git显示颜色，会让命令输出看起来更醒目：
+$ git config --global color.ui true
+这样，Git会适当地显示不同的颜色，比如git status命令：
+文件名就会标上颜色。
+我们在后面还会介绍如何更好地配置Git，以便让你的工作更高效。
+
+26、忽略特殊文件
+有些时候，你必须把某些文件放到Git工作目录中，但又不能提交它们，比如保存了数据库密码的配置文件啦，等等，每次git status都会显示Untracked files ...，有强迫症的童鞋心里肯定不爽。
+好在Git考虑到了大家的感受，这个问题解决起来也很简单，在Git工作区的根目录下创建一个特殊的.gitignore文件，然后把要忽略的文件名填进去，Git就会自动忽略这些文件。
+不需要从头写.gitignore文件，GitHub已经为我们准备了各种配置文件，只需要组合一下就可以使用了。所有配置文件可以直接在线浏览：https://github.com/github/gitignore
+忽略文件的原则是：
+忽略操作系统自动生成的文件，比如缩略图等；
+忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如Java编译产生的.class文件；
+忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。
+举个例子：
+Android的.gitignore内容为：
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+/bugly
+最后一步就是把.gitignore也提交到Git，就完成了！当然检验.gitignore的标准是git status命令是不是说working directory clean。
+使用Windows的童鞋注意了，如果你在资源管理器里新建一个.gitignore文件，它会非常弱智地提示你必须输入文件名，但是在文本编辑器里“保存”或者“另存为”就可以把文件保存为.gitignore了。
+有些时候，你想添加一个文件到Git，但发现添加不了，原因是这个文件被.gitignore忽略了：
+$ git add App.class
+The following paths are ignored by one of your .gitignore files:
+App.class
+Use -f if you really want to add them.
+如果你确实想添加该文件，可以用-f强制添加到Git：
+$ git add -f App.class
+或者你发现，可能是.gitignore写得有问题，需要找出来到底哪个规则写错了，可以用git check-ignore命令检查：
+$ git check-ignore -v App.class
+.gitignore:3:*.class	App.class
+Git会告诉我们，.gitignore的第3行规则忽略了该文件，于是我们就可以知道应该修订哪个规则。
+还有些时候，当我们编写了规则排除了部分文件时：
+# 排除所有.开头的隐藏文件:
+.*
+# 排除所有.class文件:
+*.class
+但是我们发现.*这个规则把.gitignore也排除了，并且App.class需要被添加到版本库，但是被*.class规则排除了。
+虽然可以用git add -f强制添加进去，但有强迫症的童鞋还是希望不要破坏.gitignore规则，这个时候，可以添加两条例外规则：
+# 排除所有.开头的隐藏文件:
+.*
+# 排除所有.class文件:
+*.class
+# 不排除.gitignore和App.class:
+!.gitignore
+!App.class
+把指定文件排除在.gitignore规则外的写法就是!+文件名，所以，只需把例外文件添加进去即可。
+可以通过https://gitignore.itranswarp.com在线生成.gitignore文件。
+
+小结
+忽略某些文件时，需要编写.gitignore；
+修改.gitignore文件后.gitignore文件本身要放到版本库里（步骤：
+先git rm -r --cached .
+再git add .
+再git commit -m "修改.gitignore文件配置"
+再git push origin <branch_name>
+），并且可以对.gitignore做版本管理！
+
+27、配置别名
+有没有经常敲错命令？比如git status？status这个单词真心不好记。
+如果敲git st就表示git status那就简单多了，当然这种偷懒的办法我们是极力赞成的。
+我们只需要敲一行命令，告诉Git，以后st就表示status：
+$ git config --global alias.st status
+好了，现在敲git st看看效果。
+当然还有别的命令可以简写，很多人都用co表示checkout，ci表示commit，br表示branch：
+$ git config --global alias.co checkout
+$ git config --global alias.ci commit
+$ git config --global alias.br branch
+以后提交就可以简写成：
+$ git ci -m "bala bala bala..."
+--global参数是全局参数，也就是这些命令在这台电脑的所有Git仓库下都有用。
+在撤销修改一节中，我们知道，命令git reset HEAD file可以把暂存区的修改撤销掉（unstage），重新放回工作区。既然是一个unstage操作，就可以配置一个unstage别名：
+$ git config --global alias.unstage 'reset HEAD'
+当你敲入命令：
+$ git unstage test.py
+实际上Git执行的是：
+$ git reset HEAD test.py
+配置一个git last，让其显示最后一次提交信息：
+$ git config --global alias.last 'log -1'
+这样，用git last就能显示最近一次的提交：
+$ git last
+commit adca45d317e6d8a4b23f9811c3d7b7f0f180bfe2
+Merge: bd6ae48 291bea8
+Author: Michael Liao <askxuefeng@gmail.com>
+Date:   Thu Aug 22 22:49:22 2013 +0800
+
+    merge & fix hello.py
+甚至还有人丧心病狂地把lg配置成了：
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+来看看git lg的效果：
+为什么不早点告诉我？别激动，咱不是为了多记几个英文单词嘛！
+配置文件
+配置Git的时候，加上--global是针对当前用户起作用的，如果不加，那只针对当前的仓库起作用。
+配置文件放哪了？每个仓库的Git配置文件都放在.git/config文件中：
+$ cat .git/config 
+[core]
+    repositoryformatversion = 0
+    filemode = true
+    bare = false
+    logallrefupdates = true
+    ignorecase = true
+    precomposeunicode = true
+[remote "origin"]
+    url = git@github.com:michaelliao/learngit.git
+    fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+    remote = origin
+    merge = refs/heads/master
+[alias]
+    last = log -1
+别名就在[alias]后面，要删除别名，直接把对应的行删掉即可。
+而当前用户的Git配置文件放在用户主目录下的一个隐藏文件.gitconfig中：
+$ cat .gitconfig
+[alias]
+    co = checkout
+    ci = commit
+    br = branch
+    st = status
+[user]
+    name = Your Name
+    email = your@email.com
+配置别名也可以直接修改这个文件，如果改错了，可以删掉文件重新通过命令配置。
+
+小结
+给Git配置好别名，就可以输入命令时偷个懒。我们鼓励偷懒。
+
+关于被修改代码的引号问题
+在下高步尘 created at February 20, 2022 1:02 PM, Last updated at February 21, 2022 8:21 AM
+请教一下，配置命令的最后一个代码，也就是“被替换的代码”有时候无需添加引号，有时候需要添加单引号，有时候添加双引号，这三种有什么区别吗？
+廖雪峰
+Created at February 21, 2022 8:21 AM
+如果一个参数没有空格，就可以不用引号，比如
+git commit -m update
+如果一个参数有空格，就必须加引号：
+git commit -m "update README.txt"
+如果参数有双引号就用单引号：
+git commit -m 'update "README.txt"'
+如果参数有单引号就用双引号：
+git commit -m "update 'README.txt'"
+单引号和双引号还有一些细微区别，可以去看bash手册。
+
+28、搭建Git服务器
+在远程仓库一节中，我们讲了远程仓库实际上和本地仓库没啥不同，纯粹为了7x24小时开机并交换大家的修改。
+GitHub就是一个免费托管开源代码的远程仓库。但是对于某些视源代码如生命的商业公司来说，既不想公开源代码，又舍不得给GitHub交保护费，那就只能自己搭建一台Git服务器作为私有仓库使用。
+搭建Git服务器需要准备一台运行Linux的机器，强烈推荐用Ubuntu或Debian，这样，通过几条简单的apt命令就可以完成安装。
+
+29、使用SourceTree
+当我们对Git的提交、分支已经非常熟悉，可以熟练使用命令操作Git后，再使用GUI工具，就可以更高效。
+Git有很多图形界面工具，这里我们推荐SourceTree，它是由Atlassian开发的免费Git图形界面工具，可以操作任何Git库。
+首先从官网下载SourceTree并安装，然后直接运行SourceTree。
+
+问题：SourceTree推送拉取的时候一直等待
+解决：https://blog.csdn.net/Baron0071/article/details/84062638
